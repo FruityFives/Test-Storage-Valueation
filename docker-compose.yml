@@ -19,7 +19,7 @@ services:
       - backend
 
   storage-service:
-    image: fawad23/storage-service:2.0.0
+    image: fawad23/storage-service:2.1.3
     container_name: storage-service
     environment:
       - RABBITMQ_HOST=rabbitmq
@@ -37,7 +37,7 @@ services:
       - backend
 
   valuation-service:
-    image: sakariye1/valuation-service:1.0.0
+    image: sakariye1/valuation-service:2.1.1
     container_name: valuation-service
     environment:
       - RABBITMQ_HOST=rabbitmq
