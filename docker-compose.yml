@@ -1,0 +1,59 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - backend
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - backend
+
+  storage-service:
+    image: fawad23/storage-service:2.0.0
+    container_name: storage-service
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - MONGODB_URI=mongodb://mongo:27017
+      - STORAGE_DB_NAME=StorageDb
+      - STORAGE_COLLECTION_NAME=StorageEffects
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - rabbitmq
+      - mongo
+    networks:
+      - backend
+
+  valuation-service:
+    image: sakariye1/valuation-service:1.0.0
+    container_name: valuation-service
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - MongoDb__ConnectionString=mongodb://mongo:27017
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - rabbitmq
+      - mongo
+    networks:
+      - backend
+
+volumes:
+  mongo-data:
+
+networks:
+  backend:
